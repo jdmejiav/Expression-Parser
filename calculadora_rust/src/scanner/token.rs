@@ -1,3 +1,5 @@
+mod ast;
+
 pub struct Token{
     pub tipo:TokenType,
     pub data:String,
@@ -38,105 +40,97 @@ impl Parser{
         str.contains("\"")
     }
 
-    pub fn parsear_cond (&self){
-        if self._is_string_op{
-            let mut operadores:Vec<String> = Vec::new();
-            let mut operandos:Vec<String> = Vec::new();
-            let mut _is_str:bool=false;
-            let mut str_temp = String::new();
-            let mut str_op_temp = String::new ();
-            for i in self.token.data.chars(){
-                match i{
-                    ' '=>{
-                        if _is_str{
-                            str_temp.push(i);
-                        }
-                    },
-                    '\"'=>{
-                        if _is_str{
-                            _is_str=false;
-                        }else{
-                            _is_str=true;
-                            if str_op_temp.len()!=0{
-                                operadores.push(str_op_temp.clone());
-                            }
-                        }
-                    },
-                    '='=>{
-                        if _is_str{
-                            str_temp.push(i);
-                        } else {
-                            str_op_temp.push(i);
-                            if str_op_temp.len()==2{
-                                operadores.push(str_op_temp.clone());
-                            }else {
-                                if str_op_temp.len()==1{
-                                    if str_temp.len()!=0{
-                                        operandos.push(str_temp.clone());
-                                        str_temp.clear();
-                                    }else {
-                                        println!("Sysntax Error!");
-                                        break;
-                                    }
-                                }else if str_op_temp.len()>2{
-                                    println!("Sysntax Error!");
-                                    break;
-                                }
-                            }
-                        }
-                    },
-                    '>'| '<' =>{
-                        if _is_str{
-                            str_temp.push(i);
-                        } else {
-                            str_op_temp.push (i);
-                            if str_op_temp.len()>1{
-                                println!("Sysntax Error!");
-                                break;
-                            }else if str_op_temp.len()==1{
-                                if str_temp.len()!=0{
-                                    operandos.push(str_temp.clone());
-                                }else {
-                                    println!("Sysntax Error!");
-                                    break;
-                                }
-                            }
+    fn to_posfix_exp(&self) -> Vec<String>{
+        let mut salida: Vec<String> = Vec::new();
+        let mut revert: Vec<char> = self.token.data.chars().collect();
+        let mut entrada:Vec<char>= Vec::new();
+        let mut pila:Vec<String>=Vec::new();
+        let mut str_temp = String::new();
 
-                        }
+        while !revert.is_empty(){
+            match revert.pop(){
+                Some (c) => entrada.push(Some(c).unwrap()),
+                None => None.unwrap()
+            }
+        }
+        while !entrada.is_empty(){
+            let i = match entrada.pop(){
+                Some(c) => (Some(c).unwrap()),
+                None => None.unwrap()
+            };
+            println!("I:{}",i);
+            match i {
+                '0' | '1' | '2' | '3'
+                | '4' | '5' | '6' |
+                '7' | '8' | '9' =>{
+                    println!("llega acá");
+                    str_temp.push(i);
+                },
+                '('=>{
+                    if str_temp!=""{
+                        salida.push(str_temp);
+                        str_temp= String::new();
+                    }
+                    pila.push(i.to_string());
 
                     },
-                    '!'=>{
-                        if _is_str{
-                            str_temp.push(i);
-                        } else {
-                            str_op_temp.push (i);
-                            if str_op_temp.len()>1{
-                                println!("Sysntax Error!");
-                                break;
-                            }else if str_op_temp.len()==1{
-                                if str_temp.len()!=0{
-                                    operandos.push(str_temp.clone());
-                                }else {
-                                    println!("Sysntax Error!");
-                                    break;
-                                }
-                            }
+                ')'=>{
+                    if str_temp!=""{
+                        salida.push(str_temp);
+                        str_temp= String::new();
+                    }
+                  while !pila.is_empty()&&string_to_char(&mut pila.clone().pop().unwrap())!='('  {
+                      let temp = pila.pop().unwrap();
+                      salida.push (temp);
+                  }
+                  if string_to_char(&mut pila.clone().pop().unwrap())=='('{
+                      pila.pop();
+                  }else {
+                      println!("Sysntax Error!");
+                      break;
+                  }
+                },
+                '+'|'-'
+                |'*'|'/'|
+                's'|'l'=>{
+                   if str_temp!=""{
+                        salida.push(str_temp);
+                        str_temp= String::new();
+                    }
+                   while !pila.is_empty()&&is_higher_or_equal_precedence(string_to_char(&mut pila.clone().pop().unwrap()),i){
+                       println!("entra acá por {}",i);
+                       let temp = pila.pop().unwrap();
+                       salida.push(temp);
+                   }
+                   pila.push(i.to_string());
 
-                        }
-
-                    },
-                    _=>{
-                        str_temp.push(i);
-                    },
+                },
+                '\n'=>{
+                    if str_temp!=""{
+                        salida.push(str_temp);
+                        str_temp= String::new();
+                    }
+                }
+                _=>{
+                    println!("Sysntax Error!");
+                    break;
                 }
             }
-            if (str_temp.len()!=0){
-                operandos.push(str_temp);
-            }
-        }else{
-
         }
+        while !pila.is_empty(){
+            let temp:String = pila.pop().unwrap();
+            salida.push(temp);
+        }
+
+        return salida;
+
     }
+
+    fn to_ast(&self,posfix_exp:Vec<String>){
+        let mut _numeros:Vec<f64>=Vec::new();
+
+    }
+
     fn evaluar_operaciones_int(mut expression:String)->isize{
         return 1;
     }
@@ -147,19 +141,18 @@ impl Parser{
         let mut numeros: Vec<f64> = Vec::new();
         let mut operadores: Vec<String> = Vec::new();
         let mut temp = String::new ();
-        let temp
         for i in expression.chars(){
             match i{
                 '+' | '-' =>{
                     let temporal=i.to_string();
                     operadores=instert_at_bottom_str(operadores,temporal);
-                    numeros=instert_at_bottom_f64(numeros,temp);
-                    temp.clear();
+                    numeros=instert_at_bottom_f64(numeros,temp.parse().ok().expect("Error"));
+                    temp=String::new();
                 },
                 '*' | '/' =>{
                     operadores.push(i.to_string());
                     numeros.push(temp.parse().ok().expect("Error"));
-                    temp.clear();
+                    temp = String::new();
                 },
                 's'|'i'|'n' =>{
 
@@ -186,3 +179,43 @@ impl Parser{
      vec.append(&mut temp_vec);
      vec
  }
+fn is_higher_or_equal_precedence(char1:char,char2:char)->bool{
+     let prec_c1= match char1{
+         '+'|'-'=>{
+             1
+         }
+         '*'|'/' =>{
+             2
+         }
+         's'|'l' =>{
+             3
+         }
+         _=>(0)
+     };
+     let prec_c2= match char2{
+         '+'|'-'=>{
+             1
+         }
+         '*'|'/' =>{
+             2
+         }
+         's'|'l' =>{
+             3
+         },
+         _=>{
+             0
+         }
+     };
+     prec_c1>=prec_c2
+ }
+
+ fn string_to_char(string:&mut String)->char{
+    string.chars().next().unwrap()
+ }
+
+fn insert_at_begin(vec:&mut Vec<f64>,temp:f64)->Vec<f64>{
+    let mut retorno:Vec<f64> = Vec::new();
+    retorno.push(temp);
+    retorno.append(vec);
+    retorno
+}

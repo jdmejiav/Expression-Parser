@@ -1,5 +1,4 @@
-mod token;
-
+pub mod token;
 pub struct Scanner {
     pub scanner:String,
 }
@@ -104,7 +103,13 @@ impl Scanner{
                     } else if _exp_2{
                         str_exp_2.push(i);
                     }
-                }
+                },
+                '\n'=> {
+                    _t_exp_2=token::Token::new(token::TokenType::Exp,str_exp_2.clone());
+                    if _var{
+                        _t_var=token::Token::new(token::TokenType::Var,str_var.clone());
+                    }
+                },
                 _=>{
                     if _var{
                         str_var.push(i);
@@ -118,7 +123,6 @@ impl Scanner{
                 }
             }
         }
-    _t_exp_2=token::Token::new(token::TokenType::Exp,str_exp_2.clone());
     (_t_var,_t_cond,_t_exp_1,_t_exp_2)
     }
 }
