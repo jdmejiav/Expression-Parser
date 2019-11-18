@@ -1,8 +1,8 @@
 [package]
 name = "calculadora_rust"
 version = "0.1.0"
-authors = ["jdmejiav <jdmejiav@eafit.edu.co>"]
-edition = "2018"
+authors = ["jdmejiav"]
+edition = "2019"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
