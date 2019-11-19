@@ -10,10 +10,6 @@ impl Token {
             data,
         }
     }
-    pub fn analizar (&mut self){
-
-    }
-
 }
 
 pub enum TokenType{
@@ -129,7 +125,6 @@ impl Parser{
 
                     let mut temp = posfix_exp.clone();
                     temp.pop();
-                    println!("temp: {} posfix_exp.clone(): {}",temp.clone().pop().unwrap(),posfix_exp.clone().pop().unwrap());
                     return Parser::evaluar(&mut temp)*Parser::evaluar(&mut posfix_exp.clone());
                 }else if op == "/"{
                     let mut temp = posfix_exp.clone();
