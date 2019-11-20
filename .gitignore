@@ -1,4 +1,7 @@
 /target
 **/*.rs.bk
 *.lock
-*.o
+*./o
+./calculadora_python/__pycache__/*.pyc
+./calculadora_rust/target/**
+./calculadora_java/src/run_file.sh
