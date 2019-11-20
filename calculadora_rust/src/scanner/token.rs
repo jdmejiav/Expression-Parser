@@ -72,16 +72,19 @@ impl Parser{
                     '+'|'-'
                     |'*'|'/'|
                     's'|'l'=>{
-                       if str_temp!=""{
-                            salida.push(str_temp);
-                            str_temp= String::new();
+                        if i=='-'&&str_temp==""{
+                            str_temp.push(i);
+                        }else{
+                            if str_temp!=""{
+                                salida.push(str_temp);
+                                str_temp= String::new();
+                            }
+                            while !pila.is_empty()&&is_higher_or_equal_precedence(string_to_char(&mut pila.clone().pop().unwrap()),i){
+                                let temp = pila.pop().unwrap();
+                                salida.push(temp);
+                            }
+                            pila.push(i.to_string());
                         }
-                       while !pila.is_empty()&&is_higher_or_equal_precedence(string_to_char(&mut pila.clone().pop().unwrap()),i){
-                           let temp = pila.pop().unwrap();
-                           salida.push(temp);
-                       }
-                       pila.push(i.to_string());
-
                     },
                     ' '=>{},
                     _=>{}
@@ -109,25 +112,17 @@ impl Parser{
             Err(_)=>{
                 let op:String = posfix_exp.pop().unwrap();
                 if op == "+"{
-                    //let mut temp = posfix_exp.clone();
-                    //temp.pop();
-
                     return Parser::evaluar(&mut posfix_exp)+Parser::evaluar(&mut posfix_exp);
                 }else if op == "-"{
-                    //let mut temp = posfix_exp.clone();
-                    //temp.pop();
 
                     return Parser::evaluar(&mut posfix_exp)-Parser::evaluar(&mut posfix_exp);
                 }else if op == "*"{
 
-                    //let mut temp = posfix_exp.clone();
-                    //temp.pop();
                     return Parser::evaluar(&mut posfix_exp)*Parser::evaluar(&mut posfix_exp);
                 }else if op == "/"{
-                    //let mut temp = posfix_exp.clone();
-                    //temp.pop();
-
-                    return Parser::evaluar(&mut posfix_exp)/Parser::evaluar(&mut posfix_exp);
+                    let _denominador = Parser::evaluar(&mut posfix_exp);
+                    let _numerador = Parser::evaluar(&mut posfix_exp);
+                    return _numerador/_denominador;
                 }else if op == "l"{
                     return Parser::evaluar(&mut posfix_exp).ln();
                 }else if op == "s"{

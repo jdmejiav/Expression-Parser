@@ -1,7 +1,7 @@
 import java.util.Hashtable;
 import java.util.Stack;
 import java.util.Scanner;
-import java.io.*;
+import java.io.IOException;
 
 public class Main {
 
@@ -9,10 +9,6 @@ public class Main {
         private Stack <String> list_vars;
         public Main (){
           inicializar();
-        }
-
-        public static void main (String []args){
-          Main main = new Main ();
         }
 
         private void inicializar(){
@@ -80,5 +76,11 @@ public class Main {
           }while (!entrada.trim().equals("exit"));
           System.out.println("Build finished");
         }
+
+
+        public static void main (String []args){
+            Main main = new Main ();
+        }
+
 
 }

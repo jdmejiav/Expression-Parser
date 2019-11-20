@@ -14,8 +14,6 @@ public class Parser {
     String str_temp="";
     Stack <Character> pila_operadores = new Stack <Character>();
     Stack <String> salida = new Stack <String>();
-    Stack <Character> revert = new Stack <Character>();
-
     for (char i: entrada){
       switch (i){
         case '0': case '1':
@@ -52,14 +50,18 @@ public class Parser {
         case '+': case '-':
         case '*': case '/':
         case 'l': case 's':
-            if (!str_temp.equals("")){
+            if (i=='-'&&str_temp.equals("")){
+                  str_temp+="-";
+            } else {
+              if (!str_temp.equals("")){
                 salida.push(str_temp);
                 str_temp= new String("");
               }
-            while (!pila_operadores.isEmpty()&&this.isHigherOrEqualPrecedence((char) pila_operadores.peek(),i)){
-              salida.push(String.valueOf(pila_operadores.pop()));
+              while (!pila_operadores.isEmpty()&&this.isHigherOrEqualPrecedence((char) pila_operadores.peek(),i)){
+                salida.push(String.valueOf(pila_operadores.pop()));
+              }
+              pila_operadores.push(i);
             }
-            pila_operadores.push(i);
             break;
         case ' ': default:
             break;
@@ -95,7 +97,9 @@ public class Parser {
         return this.evaluar(posfix_exp)*evaluar(posfix_exp);
       }
       else if (op.equals("/")){
-        return this.evaluar(posfix_exp)/evaluar(posfix_exp);
+        double denominador= evaluar(posfix_exp);
+        double numerador = evaluar(posfix_exp);
+        return numerador/denominador;
       } else if (op.equals("l")){
         return Math.log(this.evaluar(posfix_exp));
       }else if (op.equals("s")){
