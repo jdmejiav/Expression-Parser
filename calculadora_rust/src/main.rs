@@ -1,4 +1,5 @@
 pub mod scanner;
+
 use std::collections::HashMap;
 
 use std::io::{
@@ -37,6 +38,19 @@ fn main() {
                     _exp_2.data=_exp_2.data.replace(&i.clone(),_value_temp.clone());
                 }
             }
+            /*
+                println!("var: {}",_var.data);
+                println!("cond: {}",_cond.data);
+                println!("exp1: {}",_exp_1.data);
+                println!("exp2: {}",_exp_2.data);
+            */
+            _cond.data=_cond.data.replace(",",".");
+            _exp_1.data=_exp_1.data.replace(",",".");
+            _exp_2.data=_exp_2.data.replace(",",".");
+            _cond.data=_cond.data.trim().to_string();
+            _exp_1.data=_exp_1.data.trim().to_string();
+            _exp_2.data=_exp_2.data.trim().to_string();
+
 
             if _var.data!=vacio&&_cond.data==vacio&&_exp_1.data==vacio&&_exp_2.data==vacio{
 
@@ -67,7 +81,8 @@ fn main() {
                      let mut exp2=_exp_2.data;
                      exp_value=scanner::token::Parser::evaluar_numeros(&mut exp2);
                  }
-                 vars.insert(_var.data,exp_value);
+                 vars.insert(_var.data.trim().to_string().clone(),exp_value);
+                 _list_vars.push(_var.data);
                  println!("{}",exp_value);
             }
 

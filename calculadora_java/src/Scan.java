@@ -93,8 +93,19 @@ public class Scan{
             }
             break;
           case '\n':
-
               break;
+          case ',':
+              if (var){
+                str_var.append(".");
+              }else if (cond){
+                  str_cond.append(".");
+              }else if (exp_1){
+                  str_exp_1.append(".");
+              }else if (exp_2){
+                  str_exp_2.append(".");
+              }
+              break;
+
           default:
               if (var){
                 str_var.append(sc.charAt(i));

@@ -1,4 +1,3 @@
-
 pub struct Token{
     pub tipo:TokenType,
     pub data:String,
@@ -43,7 +42,7 @@ impl Parser{
                 match i {
                     '0' | '1' | '2' | '3'
                     | '4' | '5' | '6' |
-                    '7' | '8' | '9' =>{
+                    '7' | '8' | '9' | '.' =>{
                         str_temp.push(i);
                     },
                     '('=>{
@@ -78,7 +77,6 @@ impl Parser{
                             str_temp= String::new();
                         }
                        while !pila.is_empty()&&is_higher_or_equal_precedence(string_to_char(&mut pila.clone().pop().unwrap()),i){
-
                            let temp = pila.pop().unwrap();
                            salida.push(temp);
                        }
@@ -98,11 +96,10 @@ impl Parser{
                 salida.push(temp);
             }
 
-
         return Parser::evaluar(&mut salida);
     }
 
-    pub fn evaluar(posfix_exp :&mut Vec<String>)->f64{
+    pub fn evaluar(mut posfix_exp :&mut Vec<String>)->f64{
 
         let retorno:f64= match posfix_exp.clone().pop().unwrap().parse(){
             Ok(num)=>{
@@ -112,29 +109,29 @@ impl Parser{
             Err(_)=>{
                 let op:String = posfix_exp.pop().unwrap();
                 if op == "+"{
-                    let mut temp = posfix_exp.clone();
-                    temp.pop();
+                    //let mut temp = posfix_exp.clone();
+                    //temp.pop();
 
-                    return Parser::evaluar(&mut temp)+Parser::evaluar(&mut posfix_exp.clone());
+                    return Parser::evaluar(&mut posfix_exp)+Parser::evaluar(&mut posfix_exp);
                 }else if op == "-"{
-                    let mut temp = posfix_exp.clone();
-                    temp.pop();
+                    //let mut temp = posfix_exp.clone();
+                    //temp.pop();
 
-                    return Parser::evaluar(&mut temp)-Parser::evaluar(&mut posfix_exp.clone());
+                    return Parser::evaluar(&mut posfix_exp)-Parser::evaluar(&mut posfix_exp);
                 }else if op == "*"{
 
-                    let mut temp = posfix_exp.clone();
-                    temp.pop();
-                    return Parser::evaluar(&mut temp)*Parser::evaluar(&mut posfix_exp.clone());
+                    //let mut temp = posfix_exp.clone();
+                    //temp.pop();
+                    return Parser::evaluar(&mut posfix_exp)*Parser::evaluar(&mut posfix_exp);
                 }else if op == "/"{
-                    let mut temp = posfix_exp.clone();
-                    temp.pop();
+                    //let mut temp = posfix_exp.clone();
+                    //temp.pop();
 
-                    return Parser::evaluar(&mut temp)/Parser::evaluar(&mut posfix_exp.clone());
+                    return Parser::evaluar(&mut posfix_exp)/Parser::evaluar(&mut posfix_exp);
                 }else if op == "l"{
-                    return Parser::evaluar(&mut posfix_exp.clone()).ln();
+                    return Parser::evaluar(&mut posfix_exp).ln();
                 }else if op == "s"{
-                    return Parser::evaluar(&mut posfix_exp.clone()).sin();
+                    return Parser::evaluar(&mut posfix_exp).sin();
                 }else{
                     -1.0
                 }
@@ -214,7 +211,7 @@ impl Parser{
         }else if op=="ERROR"{
             println!("Sysntax Error!");
             {
-                panic!("");
+                panic!("Variable not found");
             }
         }
         retorno
