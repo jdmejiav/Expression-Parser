@@ -42,7 +42,6 @@ def main():
                 except:
                     print('Something went wrong')
                     continue
-                        
             else:
                 print(vars[_var])
 

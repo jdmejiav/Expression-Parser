@@ -67,6 +67,7 @@ public class Parser {
             break;
 
       }
+
     }
 
 
@@ -76,7 +77,6 @@ public class Parser {
     while (!pila_operadores.isEmpty()){
       salida.push(pila_operadores.pop().toString());
     }
-
 
     return evaluar(salida);
   }
@@ -92,7 +92,9 @@ public class Parser {
       if (op.equals("+")){
         return this.evaluar(posfix_exp)+evaluar(posfix_exp);
       } else if (op.equals("-")){
-        return this.evaluar(posfix_exp)-evaluar(posfix_exp);
+        double segundo = evaluar(posfix_exp);
+        double primero = evaluar(posfix_exp);
+        return primero-segundo;
       } else if (op.equals("*")){
         return this.evaluar(posfix_exp)*evaluar(posfix_exp);
       }
@@ -173,7 +175,9 @@ public class Parser {
       retorno = this.evaluarNumeros(op1)<this.evaluarNumeros(op2);
     } else if (op.equals(">")){
 
-      retorno = this.evaluarNumeros(op1)>this.evaluarNumeros(op2);
+      double primero = evaluarNumeros(op1);
+      double segundo = evaluarNumeros(op2);
+      retorno = primero>segundo;
     } else{
       throw new Exception("Error");
     }

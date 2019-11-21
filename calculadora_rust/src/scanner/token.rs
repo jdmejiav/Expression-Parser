@@ -114,8 +114,9 @@ impl Parser{
                 if op == "+"{
                     return Parser::evaluar(&mut posfix_exp)+Parser::evaluar(&mut posfix_exp);
                 }else if op == "-"{
-
-                    return Parser::evaluar(&mut posfix_exp)-Parser::evaluar(&mut posfix_exp);
+                    let _segundo = Parser::evaluar(&mut posfix_exp);
+                    let _primero = Parser::evaluar(&mut posfix_exp);    
+                    return _primero-_segundo;
                 }else if op == "*"{
 
                     return Parser::evaluar(&mut posfix_exp)*Parser::evaluar(&mut posfix_exp);

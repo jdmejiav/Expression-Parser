@@ -1,4 +1,4 @@
-javac -d ../run *.java;
-cd ../run/;
+javac -d ../run Main.java;
+cd ../run;
 java Main;
 cd ../src/;
