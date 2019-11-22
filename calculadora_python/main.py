@@ -12,6 +12,10 @@ def main():
         if entrada=="exit":
             break;
         else:
+            _var=""
+            _cond=""
+            _exp_1=""
+            _exp_2=""
             _var,_cond,_exp_1,_exp_2=scanner.findTokens(entrada)
             if not _var in vars:
                 for i in vars:
