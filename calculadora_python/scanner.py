@@ -1,10 +1,11 @@
 
-_var=""
-_cond=""
-_exp_1=""
-_exp_2=""
+
 
 def findTokens(sc):
+    _var=""
+    _cond=""
+    _exp_1=""
+    _exp_2=""
     var=True
     cond=True
     exp_1=True
