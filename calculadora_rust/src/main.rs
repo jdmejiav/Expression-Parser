@@ -1,5 +1,7 @@
 pub mod scanner;
 
+use scanner::Scanner;
+use scanner::token::Parser;
 use std::collections::HashMap;
 
 use std::io::{
@@ -23,7 +25,7 @@ fn main() {
             println!("Build finished");
             break;
         } else{
-            let sc = scanner::Scanner::new(entrada);
+            let sc = Scanner::new(entrada);
             let (mut _var,mut _cond,mut _exp_1,mut _exp_2)=sc.scanear(&sc.scanner);
             let vacio = String::new();
             for i in _list_vars.iter(){
@@ -38,12 +40,7 @@ fn main() {
                     _exp_2.data=_exp_2.data.replace(&i.clone(),_value_temp.clone());
                 }
             }
-            /*
-                println!("var: {}",_var.data);
-                println!("cond: {}",_cond.data);
-                println!("exp1: {}",_exp_1.data);
-                println!("exp2: {}",_exp_2.data);
-            */
+
             _cond.data=_cond.data.replace(",",".");
             _exp_1.data=_exp_1.data.replace(",",".");
             _exp_2.data=_exp_2.data.replace(",",".");
@@ -72,14 +69,14 @@ fn main() {
                 _exp_2.data=_exp_2.data.replace("log","l");
                 _exp_1.data=_exp_1.data.replace("sin","s");
                 _exp_2.data=_exp_2.data.replace("sin","s");
-                let cond_exp:bool = scanner::token::Parser::evaluar_condiciones(&mut _cond_temp);
+                let cond_exp:bool = Parser::evaluar_condiciones(&mut _cond_temp);
                 let exp_value:f64;
                  if cond_exp{
                      let mut exp1=_exp_1.data;
-                     exp_value=scanner::token::Parser::evaluar_numeros(&mut exp1);
+                     exp_value=Parser::evaluar_numeros(&mut exp1);
                  }else{
                      let mut exp2=_exp_2.data;
-                     exp_value=scanner::token::Parser::evaluar_numeros(&mut exp2);
+                     exp_value=Parser::evaluar_numeros(&mut exp2);
                  }
                  vars.insert(_var.data.trim().to_string().clone(),exp_value);
                  _list_vars.push(_var.data);

@@ -1,4 +1,8 @@
 pub mod token;
+use token::Token;
+use token::TokenType;
+
+
 pub struct Scanner {
     pub scanner:String,
 }
@@ -8,17 +12,17 @@ impl Scanner{
             scanner,
         }
     }
-    pub fn scanear(&self,sc:&String) -> (token::Token,token::Token,token::Token,token::Token,){
+    pub fn scanear(&self,sc:&String) -> (Token,Token,Token,Token,){
         let mut _var:bool=true;
         let mut _cond:bool=true;
         let mut _exp_1:bool=true;
         let mut _exp_2:bool=true;
         let mut _is_str:bool=false;
 
-        let mut _t_var:token::Token=token::Token::new(token::TokenType::Default,String::from(""));
-        let mut _t_cond:token::Token=token::Token::new(token::TokenType::Default,String::from(""));
-        let mut _t_exp_1:token::Token=token::Token::new(token::TokenType::Default,String::from(""));
-        let mut _t_exp_2:token::Token=token::Token::new(token::TokenType::Default,String::from(""));
+        let mut _t_var:Token=Token::new(TokenType::Default,String::from(""));
+        let mut _t_cond:Token=Token::new(TokenType::Default,String::from(""));
+        let mut _t_exp_1:Token=Token::new(TokenType::Default,String::from(""));
+        let mut _t_exp_2:Token=Token::new(TokenType::Default,String::from(""));
 
         let mut str_var=String::new();
         let mut str_cond=String::new();
@@ -30,7 +34,7 @@ impl Scanner{
                 '='=>{
                     if _var{
                         _var = false;
-                        _t_var=token::Token::new(token::TokenType::Var,str_var.clone());
+                        _t_var=Token::new(TokenType::Var,str_var.clone());
                     }else if _is_str{
                         if _cond{
                             str_cond.push(i);
@@ -51,7 +55,7 @@ impl Scanner{
                 '?'=>{
                     if _cond&&!_is_str{
                         _cond=false;
-                        _t_cond=token::Token::new(token::TokenType::Cond,str_cond.clone());
+                        _t_cond=Token::new(TokenType::Cond,str_cond.clone());
                     }else if _is_str{
                         if _cond{
                             str_cond.push(i);
@@ -69,7 +73,7 @@ impl Scanner{
                 ':'=>{
                     if _exp_1&&!_is_str{
                         _exp_1=false;
-                        _t_exp_1=token::Token::new(token::TokenType::Cond,str_exp_1.clone());
+                        _t_exp_1=Token::new(TokenType::Cond,str_exp_1.clone());
                     }else if _is_str{
                         if _cond{
                             str_cond.push(i);
@@ -105,9 +109,9 @@ impl Scanner{
                     }
                 },
                 '\n'=> {
-                    _t_exp_2=token::Token::new(token::TokenType::Exp,str_exp_2.clone());
+                    _t_exp_2=Token::new(TokenType::Exp,str_exp_2.clone());
                     if _var{
-                        _t_var=token::Token::new(token::TokenType::Var,str_var.clone());
+                        _t_var=Token::new(TokenType::Var,str_var.clone());
                     }
                 },
                 _=>{

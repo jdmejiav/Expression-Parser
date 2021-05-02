@@ -1,134 +1,133 @@
-pub struct Token{
-    pub tipo:TokenType,
-    pub data:String,
+
+pub struct Token {
+    pub tipo: TokenType,
+    pub data: String,
 }
+
 impl Token {
-    pub fn new (tipo:TokenType,data:String) -> Token{
-        Token{
-            tipo,
-            data,
-        }
+    pub fn new(tipo: TokenType, data: String) -> Token {
+        Token { tipo, data }
     }
 }
 
-pub enum TokenType{
+pub enum TokenType {
     Cond,
     Exp,
     Var,
     Default,
 }
 
-pub struct Parser {
-}
-impl Parser{
-    pub fn evaluar_numeros (string: &mut String)->f64{
-        let mut revert:Vec<char>=string.chars().collect();
-            let mut salida:Vec<String> = Vec::new();
-            let mut entrada:Vec<char>=Vec::new();
-            let mut pila:Vec<String>=Vec::new();
-            let mut str_temp = String::new();
+pub struct Parser {}
 
-            while !revert.is_empty(){
-                match revert.pop(){
-                    Some (c) => entrada.push(Some(c).unwrap()),
-                    None => None.unwrap()
-                }
+impl Parser {
+    pub fn evaluar_numeros(string: &mut String) -> f64 {
+        let mut revert: Vec<char> = string.chars().collect();
+        let mut salida: Vec<String> = Vec::new();
+        let mut entrada: Vec<char> = Vec::new();
+        let mut pila: Vec<String> = Vec::new();
+        let mut str_temp = String::new();
+
+        while !revert.is_empty() {
+            match revert.pop() {
+                Some(c) => entrada.push(Some(c).unwrap()),
+                None => None.unwrap(),
             }
-            while !entrada.is_empty(){
-                let i = match entrada.pop(){
-                    Some(c) => (Some(c).unwrap()),
-                    None => None.unwrap()
-                };
-                match i {
-                    '0' | '1' | '2' | '3'
-                    | '4' | '5' | '6' |
-                    '7' | '8' | '9' | '.' =>{
+        }
+        while !entrada.is_empty() {
+            let i = match entrada.pop() {
+                Some(c) => (Some(c).unwrap()),
+                None => None.unwrap(),
+            };
+            match i {
+                '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '.' => {
+                    str_temp.push(i);
+                }
+                '(' => {
+                    if str_temp != "" {
+                        salida.push(str_temp);
+                        str_temp = String::new();
+                    }
+                    pila.push(i.to_string());
+                }
+                ')' => {
+                    if str_temp != "" {
+                        salida.push(str_temp);
+                        str_temp = String::new();
+                    }
+                    while !pila.is_empty()
+                        && string_to_char(&mut pila.clone().pop().unwrap()) != '('
+                    {
+                        let temp = pila.pop().unwrap();
+                        salida.push(temp);
+                    }
+                    if string_to_char(&mut pila.clone().pop().unwrap()) == '(' {
+                        pila.pop();
+                    } else {
+                        println!("Sysntax Error!");
+                        break;
+                    }
+                }
+                '+' | '-' | '*' | '/' | 's' | 'l' => {
+                    if i == '-' && str_temp == "" {
                         str_temp.push(i);
-                    },
-                    '('=>{
-                        if str_temp!=""{
+                    } else {
+                        if str_temp != "" {
                             salida.push(str_temp);
-                            str_temp= String::new();
+                            str_temp = String::new();
+                        }
+                        while !pila.is_empty()
+                            && is_higher_or_equal_precedence(
+                                string_to_char(&mut pila.clone().pop().unwrap()),
+                                i,
+                            )
+                        {
+                            let temp = pila.pop().unwrap();
+                            salida.push(temp);
                         }
                         pila.push(i.to_string());
-
-                        },
-                    ')'=>{
-                        if str_temp!=""{
-                            salida.push(str_temp);
-                            str_temp= String::new();
-                        }
-                      while !pila.is_empty()&&string_to_char(&mut pila.clone().pop().unwrap())!='('  {
-                          let temp = pila.pop().unwrap();
-                          salida.push (temp);
-                      }
-                      if string_to_char(&mut pila.clone().pop().unwrap())=='('{
-                          pila.pop();
-                      }else {
-                          println!("Sysntax Error!");
-                          break;
-                      }
-                    },
-                    '+'|'-'
-                    |'*'|'/'|
-                    's'|'l'=>{
-                        if i=='-'&&str_temp==""{
-                            str_temp.push(i);
-                        }else{
-                            if str_temp!=""{
-                                salida.push(str_temp);
-                                str_temp= String::new();
-                            }
-                            while !pila.is_empty()&&is_higher_or_equal_precedence(string_to_char(&mut pila.clone().pop().unwrap()),i){
-                                let temp = pila.pop().unwrap();
-                                salida.push(temp);
-                            }
-                            pila.push(i.to_string());
-                        }
-                    },
-                    ' '=>{},
-                    _=>{}
+                    }
                 }
+                ' ' => {}
+                _ => {}
             }
+        }
 
-            if str_temp!=""{
-                salida.push(str_temp);
-            }
-            while !pila.is_empty(){
-                let temp:String = pila.pop().unwrap();
-                salida.push(temp);
-            }
+        if str_temp != "" {
+            salida.push(str_temp);
+        }
+        while !pila.is_empty() {
+            let temp: String = pila.pop().unwrap();
+            salida.push(temp);
+        }
 
         return Parser::evaluar(&mut salida);
     }
 
-    pub fn evaluar(mut posfix_exp :&mut Vec<String>)->f64{
-
-        let retorno:f64= match posfix_exp.clone().pop().unwrap().parse(){
-            Ok(num)=>{
+    pub fn evaluar(mut posfix_exp: &mut Vec<String>) -> f64 {
+        let retorno: f64 = match posfix_exp.clone().pop().unwrap().parse() {
+            Ok(num) => {
                 posfix_exp.pop();
                 num
-            },
-            Err(_)=>{
-                let op:String = posfix_exp.pop().unwrap();
-                if op == "+"{
-                    return Parser::evaluar(&mut posfix_exp)+Parser::evaluar(&mut posfix_exp);
-                }else if op == "-"{
+            }
+            Err(_) => {
+                let op: String = posfix_exp.pop().unwrap();
+                if op == "+" {
+                    return Parser::evaluar(&mut posfix_exp) + Parser::evaluar(&mut posfix_exp);
+                } else if op == "-" {
                     let _segundo = Parser::evaluar(&mut posfix_exp);
-                    let _primero = Parser::evaluar(&mut posfix_exp);    
-                    return _primero-_segundo;
-                }else if op == "*"{
-
-                    return Parser::evaluar(&mut posfix_exp)*Parser::evaluar(&mut posfix_exp);
-                }else if op == "/"{
+                    let _primero = Parser::evaluar(&mut posfix_exp);
+                    return _primero - _segundo;
+                } else if op == "*" {
+                    return Parser::evaluar(&mut posfix_exp) * Parser::evaluar(&mut posfix_exp);
+                } else if op == "/" {
                     let _denominador = Parser::evaluar(&mut posfix_exp);
                     let _numerador = Parser::evaluar(&mut posfix_exp);
-                    return _numerador/_denominador;
-                }else if op == "l"{
+                    return _numerador / _denominador;
+                } else if op == "l" {
                     return Parser::evaluar(&mut posfix_exp).ln();
-                }else if op == "s"{
+                } else if op == "s" {
                     return Parser::evaluar(&mut posfix_exp).sin();
-                }else{
+                } else {
                     -1.0
                 }
             }
@@ -136,75 +135,69 @@ impl Parser{
         retorno
     }
 
+    pub fn evaluar_condiciones(cond: &mut String) -> bool {
+        let mut temp = String::new();
 
-    pub fn evaluar_condiciones(cond:&mut String) ->bool {
-        let mut temp = String::new ();
+        let mut op = String::new();
+        let mut op1 = String::new();
+        let mut op2 = String::new();
 
-        let mut op=String::new();
-        let mut op1=String::new ();
-        let mut op2=String::new ();
-
-        for i in cond.chars(){
-
+        for i in cond.chars() {
             match i {
-                '>'|'<'|'!'=>{
-                    if op.len()==0{
-                        if temp!=String::new(){
-                            op1=temp.clone();
-                            temp=String::new();
+                '>' | '<' | '!' => {
+                    if op.len() == 0 {
+                        if temp != String::new() {
+                            op1 = temp.clone();
+                            temp = String::new();
                             op.push(i);
                         } else {
-                            op=String::from("ERROR");
+                            op = String::from("ERROR");
                             break;
                         }
                     }
-                },
-                '=' =>{
-                    if op.len()==1||op.len()==0 {
-                        if op.len()==0{
-                            if temp!=String::new(){
-                                op1=temp.clone();
-                                temp=String::new();
-                            }else{
-                                op=String::from("ERROR");
+                }
+                '=' => {
+                    if op.len() == 1 || op.len() == 0 {
+                        if op.len() == 0 {
+                            if temp != String::new() {
+                                op1 = temp.clone();
+                                temp = String::new();
+                            } else {
+                                op = String::from("ERROR");
                                 break;
                             }
                         }
                         op.push(i);
-                    }else{
-                        op=String::from("ERROR");
+                    } else {
+                        op = String::from("ERROR");
                         break;
                     }
-                },
-                ' '=>{
-
-                },
-                _=> {
+                }
+                ' ' => {}
+                _ => {
                     temp.push(i);
-
                 }
             }
         }
-        if temp!=String::new(){
-            op2=temp.clone();
-        }else{
-            op=String::from("ERROR");
+        if temp != String::new() {
+            op2 = temp.clone();
+        } else {
+            op = String::from("ERROR");
         }
-        let mut retorno=false;
-        if op=="=="{
-            retorno = Parser::evaluar_numeros(&mut op1)==Parser::evaluar_numeros(&mut op2);
-        }else if op==">="{
-            retorno = Parser::evaluar_numeros(&mut op1)>=Parser::evaluar_numeros(&mut op2);
-        }else if op=="<="{
-            retorno = Parser::evaluar_numeros(&mut op1)<=Parser::evaluar_numeros(&mut op2);
-
-        }else if op=="!="{
-            retorno = Parser::evaluar_numeros(&mut op1)!=Parser::evaluar_numeros(&mut op2);
-        } else if op=="<"{
-            retorno = Parser::evaluar_numeros(&mut op1)<Parser::evaluar_numeros(&mut op2);
-        }else if op==">"{
-            retorno =Parser::evaluar_numeros(&mut op1)>Parser::evaluar_numeros(&mut op2);
-        }else if op=="ERROR"{
+        let mut retorno = false;
+        if op == "==" {
+            retorno = Parser::evaluar_numeros(&mut op1) == Parser::evaluar_numeros(&mut op2);
+        } else if op == ">=" {
+            retorno = Parser::evaluar_numeros(&mut op1) >= Parser::evaluar_numeros(&mut op2);
+        } else if op == "<=" {
+            retorno = Parser::evaluar_numeros(&mut op1) <= Parser::evaluar_numeros(&mut op2);
+        } else if op == "!=" {
+            retorno = Parser::evaluar_numeros(&mut op1) != Parser::evaluar_numeros(&mut op2);
+        } else if op == "<" {
+            retorno = Parser::evaluar_numeros(&mut op1) < Parser::evaluar_numeros(&mut op2);
+        } else if op == ">" {
+            retorno = Parser::evaluar_numeros(&mut op1) > Parser::evaluar_numeros(&mut op2);
+        } else if op == "ERROR" {
             println!("Sysntax Error!");
             {
                 panic!("Variable not found");
@@ -212,39 +205,24 @@ impl Parser{
         }
         retorno
     }
-
 }
 
-fn is_higher_or_equal_precedence(char1:char,char2:char)->bool{
-     let prec_c1= match char1{
-         '+'|'-'=>{
-             1
-         }
-         '*'|'/' =>{
-             2
-         }
-         's'|'l' =>{
-             3
-         }
-         _=>(0)
-     };
-     let prec_c2= match char2{
-         '+'|'-'=>{
-             1
-         }
-         '*'|'/' =>{
-             2
-         }
-         's'|'l' =>{
-             3
-         },
-         _=>{
-             0
-         }
-     };
-     prec_c1>=prec_c2
- }
+fn is_higher_or_equal_precedence(char1: char, char2: char) -> bool {
+    let prec_c1 = match char1 {
+        '+' | '-' => 1,
+        '*' | '/' => 2,
+        's' | 'l' => 3,
+        _ => (0),
+    };
+    let prec_c2 = match char2 {
+        '+' | '-' => 1,
+        '*' | '/' => 2,
+        's' | 'l' => 3,
+        _ => 0,
+    };
+    prec_c1 >= prec_c2
+}
 
- fn string_to_char(string:&mut String)->char{
+fn string_to_char(string: &mut String) -> char {
     string.chars().next().unwrap()
- }
+}
