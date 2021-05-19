@@ -6,12 +6,12 @@
        
 
        
-##- operadores matemáticos válidos:
+## - operadores matemáticos válidos:
         Binarios = +,-,*,/
         unarios = - , log, sin
         paréntesis = (,)
  
-##- constantes por defecto:
+## - constantes por defecto:
        pi=3.141592...
        e=2.7182818...
        modo de uso: log(pi+e), sin(pi/2), e + pi * 4, e + pi + <variable anteriormente definida>
