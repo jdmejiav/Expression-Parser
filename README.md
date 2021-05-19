@@ -1,5 +1,5 @@
 # Calculadoras
-#
+
 # Sintaxis:
 
        <variable>=<condicion>?<Expresion matemática 1>:<Expresion matemática 2>
@@ -33,5 +33,5 @@
 # calculadora Python:
  
        Se ejecuta corriendo el archivo main.py localizado en el paquete calculadora_python con el intérprete de  python (python3) 
-#       python ./calculadora_python/main.py       
-#
+       python ./calculadora_python/main.py       
+
