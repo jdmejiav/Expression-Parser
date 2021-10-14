@@ -1,22 +1,35 @@
-# Calculadoras
+# Expression Parser
 
-# Sintaxis:
+## Syntax:
 
-       <variable>=<condicion>?<Expresion matemática 1>:<Expresion matemática 2>
+       <var>=<conditionn>?<Math_exp_1>:<Math_exp_2>
        
 
        
-## - operadores matemáticos válidos:
+##  Valid math operator:
         Binarios = +,-,*,/
         unarios = - , log, sin
         paréntesis = (,)
  
-## - constantes por defecto:
-       pi=3.141592...
-       e=2.7182818...
-       modo de uso: log(pi+e), sin(pi/2), e + pi * 4, e + pi + <variable anteriormente definida>
+##  Constants by default:
+<ul>
+       <li>
+              pi=3.141592... 
+       </li>  
+       <li> 
+              e=2.7182818...
+       </li>
+       
+</ul>
 
- nota: expresiones con logaritmo y seno, deben ir encerradas entre paréntesis, ej: log(4+5*7)+sin(4*8)
+Usage mode: 
+
+       log(pi+e) 
+       sin(pi/2) 
+       e + pi * 4
+       e + pi + <Previously defined variable>
+
+Note: Logarithm and sin expression, must be between parents, ex: log(4+5*7) + sin(4*8)
 
 # Calculadora Rust:
        
